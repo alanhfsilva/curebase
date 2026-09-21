@@ -1,4 +1,5 @@
 import { ThemeToggle } from './components/ThemeToggle.js';
+import { ParticipantForm } from './components/ParticipantForm.js';
 import './App.css';
 
 export function App() {
@@ -8,7 +9,8 @@ export function App() {
         <h1>Clinical Trial Participant Capture</h1>
         <ThemeToggle />
       </header>
-      {/* ParticipantForm and ParticipantTable added in Tasks 8 and 9 */}
+      <ParticipantForm />
+      {/* ParticipantTable added in Task 9 */}
     </div>
   );
 }
