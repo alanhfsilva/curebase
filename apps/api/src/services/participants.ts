@@ -1,4 +1,4 @@
-import { and, gte, lte, desc, asc, sql, count } from 'drizzle-orm';
+import { and, desc, asc, sql, count } from 'drizzle-orm';
 import { participants } from '../db/schema.js';
 import { computeBmi } from './bmi.js';
 import { encodeCursor, decodeCursor } from './cursor.js';
@@ -8,10 +8,7 @@ import type {
   Participant,
   ListParticipantsResponse,
 } from '@curebase/shared';
-
-// Drizzle instance type is complex; validated by integration tests against real Postgres.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type DrizzleDb = any;
+import type { DrizzleDb } from '../db/connection.js';
 
 export class DuplicateEmailError extends Error {
   // `email` is accepted (not just a bare no-arg constructor) so call sites
@@ -81,10 +78,10 @@ export async function createParticipant(
 function buildBmiFilterConditions(minBmi?: number, maxBmi?: number) {
   const conditions = [];
   if (minBmi !== undefined) {
-    conditions.push(gte(participants.bmi, String(minBmi)));
+    conditions.push(sql`${participants.bmi} >= ${minBmi}::numeric`);
   }
   if (maxBmi !== undefined) {
-    conditions.push(lte(participants.bmi, String(maxBmi)));
+    conditions.push(sql`${participants.bmi} <= ${maxBmi}::numeric`);
   }
   return conditions;
 }
