@@ -3,7 +3,8 @@ import { runMigrations } from '../db/migrate.js';
 import { participants } from '../db/schema.js';
 
 const TEST_DATABASE_URL =
-  process.env.DATABASE_URL ?? 'postgresql://curebase:curebase@localhost:5432/curebase';
+  process.env.TEST_DATABASE_URL ??
+  'postgresql://curebase:curebase@localhost:5432/curebase_test';
 
 export function getTestDb() {
   return getDb(TEST_DATABASE_URL);
