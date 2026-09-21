@@ -1,15 +1,12 @@
 import { useState } from 'react';
 
 interface BmiFilterProps {
-  initialMinBmi: string;
-  initialMaxBmi: string;
   onFilter: (minBmi: string, maxBmi: string) => void;
 }
 
-/** Min/max BMI range inputs. Applying or clearing pushes the new filter up to the URL via `onFilter`. */
-export function BmiFilter({ initialMinBmi, initialMaxBmi, onFilter }: BmiFilterProps) {
-  const [minBmi, setMinBmi] = useState(initialMinBmi);
-  const [maxBmi, setMaxBmi] = useState(initialMaxBmi);
+export function BmiFilter({ onFilter }: BmiFilterProps) {
+  const [minBmi, setMinBmi] = useState('');
+  const [maxBmi, setMaxBmi] = useState('');
 
   const handleApply = () => {
     onFilter(minBmi, maxBmi);

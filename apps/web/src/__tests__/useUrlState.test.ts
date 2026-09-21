@@ -1,13 +1,9 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { useUrlState } from '../hooks/useUrlState.js';
 
 describe('useUrlState', () => {
-  beforeEach(() => {
-    window.history.replaceState(null, '', '/');
-  });
-
-  it('reads empty state from a clean URL', () => {
+  it('starts with empty state', () => {
     const { result } = renderHook(() => useUrlState());
 
     expect(result.current.state).toEqual({
@@ -18,53 +14,41 @@ describe('useUrlState', () => {
     });
   });
 
-  it('reads existing filter and pagination params from the URL', () => {
-    window.history.replaceState(null, '', '/?minBmi=18.5&maxBmi=25&cursor=abc&direction=next');
-
+  it('updates filter via setFilter and clears pagination', () => {
     const { result } = renderHook(() => useUrlState());
+
+    act(() => {
+      result.current.setPage('abc', 'next');
+    });
+
+    act(() => {
+      result.current.setFilter('18.5', '25');
+    });
 
     expect(result.current.state).toEqual({
       minBmi: '18.5',
       maxBmi: '25',
-      cursor: 'abc',
-      direction: 'next',
+      cursor: '',
+      direction: '',
     });
   });
 
-  it('writes filter params to the URL and to state via setFilter', () => {
+  it('does not write filter or pagination state to the URL', () => {
     const { result } = renderHook(() => useUrlState());
 
     act(() => {
       result.current.setFilter('18.5', '25');
     });
 
-    expect(result.current.state.minBmi).toBe('18.5');
-    expect(result.current.state.maxBmi).toBe('25');
-    expect(new URLSearchParams(window.location.search).get('minBmi')).toBe('18.5');
-  });
-
-  it('clears cursor and direction when the filter changes', () => {
-    window.history.replaceState(null, '', '/?minBmi=10&cursor=abc&direction=next');
-    const { result } = renderHook(() => useUrlState());
-
-    act(() => {
-      result.current.setFilter('20', '');
-    });
-
-    expect(result.current.state).toEqual({
-      minBmi: '20',
-      maxBmi: '',
-      cursor: '',
-      direction: '',
-    });
-    const current = new URLSearchParams(window.location.search);
-    expect(current.get('cursor')).toBeNull();
-    expect(current.get('direction')).toBeNull();
+    expect(window.location.search).toBe('');
   });
 
   it('sets cursor and direction via setPage without touching the filter', () => {
-    window.history.replaceState(null, '', '/?minBmi=18.5');
     const { result } = renderHook(() => useUrlState());
+
+    act(() => {
+      result.current.setFilter('18.5', '');
+    });
 
     act(() => {
       result.current.setPage('xyz', 'next');
@@ -79,8 +63,15 @@ describe('useUrlState', () => {
   });
 
   it('clears only cursor and direction via resetPagination', () => {
-    window.history.replaceState(null, '', '/?minBmi=18.5&cursor=xyz&direction=next');
     const { result } = renderHook(() => useUrlState());
+
+    act(() => {
+      result.current.setFilter('18.5', '30');
+    });
+
+    act(() => {
+      result.current.setPage('xyz', 'next');
+    });
 
     act(() => {
       result.current.resetPagination();
@@ -88,20 +79,9 @@ describe('useUrlState', () => {
 
     expect(result.current.state).toEqual({
       minBmi: '18.5',
-      maxBmi: '',
+      maxBmi: '30',
       cursor: '',
       direction: '',
     });
-  });
-
-  it('stays in sync when the URL changes via a popstate event (browser back/forward)', () => {
-    const { result } = renderHook(() => useUrlState());
-
-    act(() => {
-      window.history.replaceState(null, '', '/?minBmi=30');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    });
-
-    expect(result.current.state.minBmi).toBe('30');
   });
 });

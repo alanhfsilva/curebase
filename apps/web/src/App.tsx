@@ -35,13 +35,7 @@ export function App() {
 
       <div className="card">
         <div style={{ marginBottom: '1rem' }}>
-          {/* key forces remount when URL state changes externally (e.g. browser back/forward) */}
-          <BmiFilter
-            key={`${state.minBmi}|${state.maxBmi}`}
-            initialMinBmi={state.minBmi}
-            initialMaxBmi={state.maxBmi}
-            onFilter={setFilter}
-          />
+          <BmiFilter onFilter={setFilter} />
         </div>
 
         <ParticipantTable
