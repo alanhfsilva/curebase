@@ -143,6 +143,20 @@ th {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.sortable-th {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.sortable-th:hover {
+  color: var(--accent);
+}
+
+.sort-arrow {
+  font-size: 0.625rem;
 }
 
 .empty-state {
