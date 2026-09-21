@@ -2,10 +2,12 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema.js';
 
-let db: ReturnType<typeof drizzle<typeof schema>> | null = null;
+export type DrizzleDb = ReturnType<typeof drizzle<typeof schema>>;
+
+let db: DrizzleDb | null = null;
 let client: ReturnType<typeof postgres> | null = null;
 
-export function getDb(databaseUrl: string) {
+export function getDb(databaseUrl: string): DrizzleDb {
   if (!db) {
     client = postgres(databaseUrl);
     db = drizzle(client, { schema });
