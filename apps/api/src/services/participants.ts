@@ -25,11 +25,10 @@ export class DuplicateEmailError extends Error {
 }
 
 function isUniqueEmailViolation(error: unknown): boolean {
-  return (
-    error instanceof Error &&
-    error.message.toLowerCase().includes('unique') &&
-    error.message.toLowerCase().includes('email')
-  );
+  if (typeof error === 'object' && error !== null && 'code' in error) {
+    return (error as Record<string, unknown>).code === '23505';
+  }
+  return false;
 }
 
 function toParticipant(row: typeof participants.$inferSelect): Participant {
@@ -42,7 +41,7 @@ function toParticipant(row: typeof participants.$inferSelect): Participant {
     age: row.age,
     weight: Number(row.weight),
     height: Number(row.height),
-    unitSystem: row.unitSystem as 'us' | 'metric',
+    unitSystem: row.unitSystem as 'us' | 'metric', // safe: DB CHECK constraint guarantees value
     bmi: Number(row.bmi),
     createdAt: row.createdAt.toISOString(),
   };

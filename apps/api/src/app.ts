@@ -20,6 +20,14 @@ export async function buildApp(config: Config): Promise<FastifyInstance> {
             statusCode: reply.statusCode,
           };
         },
+        err(error) {
+          return {
+            type: error.constructor?.name ?? 'Error',
+            message: error.message,
+            code: error.code,
+            stack: '',
+          };
+        },
       },
     },
   });

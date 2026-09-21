@@ -17,7 +17,7 @@ const baseFields = {
         .max(15, 'Phone must have at most 15 digits'),
     ),
   age: z
-    .number()
+    .number({ invalid_type_error: 'Age is required' })
     .int('Age must be a whole number')
     .min(0, 'Age must be at least 0')
     .max(120, 'Age must be at most 120'),
@@ -26,8 +26,8 @@ const baseFields = {
 export const createParticipantSchema = z
   .object({
     ...baseFields,
-    weight: z.number().positive('Weight must be positive'),
-    height: z.number().positive('Height must be positive'),
+    weight: z.number({ invalid_type_error: 'Weight is required' }).positive('Weight must be positive'),
+    height: z.number({ invalid_type_error: 'Height is required' }).positive('Height must be positive'),
     unitSystem: z.enum(['us', 'metric']).default('us'),
   })
   .superRefine((data, ctx) => {
