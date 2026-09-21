@@ -14,6 +14,10 @@ export default defineConfig({
         target: API_PROXY_TARGET,
         changeOrigin: true,
       },
+      '/health': {
+        target: API_PROXY_TARGET,
+        changeOrigin: true,
+      },
     },
   },
   test: {
